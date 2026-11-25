@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CK555.COM - Separate Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: #121826;
+            --bg-header: #161f33;
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --info: #38bdf8;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* Lock Screen */
+        #adminLockScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .lock-box {
+            width: 100%;
+            max-width: 380px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .lock-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .lock-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        /* Header */
+        .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .brand span {
+            color: var(--accent);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 7px 12px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-warning {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: #000;
+        }
+
+        /* Container */
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 14px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .stat-card small {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-card strong {
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        /* Tabs */
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+        }
+
+        .tab-btn {
+            padding: 9px 8px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Search & Add Box */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .toolbar .form-control {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        /* Cards List */
+        .list-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .data-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px;
+            font-size: 12px;
+        }
+
+        .data-card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .meta-line {
+            color: var(--text-muted);
+            margin-top: 3px;
+            line-height: 1.45;
+        }
+
+        .meta-line b {
+            color: #e2e8f0;
+        }
+
+        .balance-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: right;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .badge.pending {
+            background: rgba(245, 158, 11, 0.16);
+            color: var(--accent);
+        }
+
+        .badge.approved, .badge.success {
+            background: rgba(0, 255, 136, 0.16);
+            color: var(--primary);
+        }
+
+        .badge.rejected, .badge.cancelled {
+            background: rgba(239, 68, 68, 0.16);
+            color: var(--danger);
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 10px;
+            padding-top: 9px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .empty-note {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Admin Lock Screen -->
+    <div id="adminLockScreen">
+        <div class="lock-box">
+            <div class="lock-title"><i class="fas fa-shield-alt"></i> CK555 ADMIN</div>
+            <div class="lock-sub">অ্যাডমিন প্যানেলে প্রবেশ করতে পিন দিন (Default: 1234)</div>
+            <form onsubmit="unlockAdmin(event)">
+                <div class="form-group">
+                    <label>Admin PIN</label>
+                    <input type="password" id="lockPinInput" class="form-control" placeholder="1234" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;">
+                    <i class="fas fa-unlock"></i> Login Admin Panel
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Top Header -->
+    <header class="admin-header">
+        <div class="brand">CK<span>555</span> ADMIN</div>
+        <div class="header-actions">
+            <button class="btn btn-outline" onclick="refreshAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <button class="btn btn-danger" onclick="lockAdmin()"><i class="fas fa-lock"></i> Lock</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Summary Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <small>Total Users</small>
+                <strong id="statTotalUsers">0</strong>
+            </div>
+            <div class="stat-card">
+                <small>All Users Balance</small>
+                <strong id="statTotalBalance">৳ 0.00</strong>
+            </div>
+            <div class="stat-card">
+                <small>Pending Deposits</small>
+                <strong id="statPendingDep" style="color:var(--accent);">0</strong>
+            </div>
+            <div class="stat-card">
+                <small>Pending Withdraws</small>
+                <strong id="statPendingWdr" style="color:var(--info);">0</strong>
+            </div>
+        </div>
+
+        <!-- Section Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" id="tabBtnUsers" onclick="switchSection('users')">
+                <i class="fas fa-users"></i> Users & Profiles
+            </button>
+            <button class="tab-btn" id="tabBtnDeposits" onclick="switchSection('deposits')">
+                <i class="fas fa-arrow-circle-down"></i> Deposits
+            </button>
+            <button class="tab-btn" id="tabBtnWithdraws" onclick="switchSection('withdraws')">
+                <i class="fas fa-arrow-circle-up"></i> Withdraws
+            </button>
+        </div>
+
+        <!-- USERS SECTION -->
+        <section id="sectionUsers">
+            <div class="toolbar">
+                <input type="text" id="userSearchInput" class="form-control" placeholder="নাম বা ফোন নম্বর দিয়ে খুঁজুন..." oninput="renderUsers()">
+                <button class="btn btn-primary" onclick="openModal('addUserModal')">
+                    <i class="fas fa-user-plus"></i> Add User
+                </button>
+            </div>
+            <div class="list-box" id="usersList"></div>
+        </section>
+
+        <!-- DEPOSITS SECTION -->
+        <section id="sectionDeposits" style="display:none;">
+            <div class="list-box" id="depositsList"></div>
+        </section>
+
+        <!-- WITHDRAWS SECTION -->
+        <section id="sectionWithdraws" style="display:none;">
+            <div class="list-box" id="withdrawsList"></div>
+        </section>
+    </main>
+
+    <!-- User Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3><i class="fas fa-id-card" style="color:var(--primary);"></i> User Profile</h3>
+                <button class="close-btn" onclick="closeModal('profileModal')">&times;</button>
+            </div>
+            <div id="profileModalBody" style="font-size:13px;line-height:1.7;"></div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3><i class="fas fa-user-plus" style="color:var(--primary);"></i> Add New User</h3>
+                <button class="close-btn" onclick="closeModal('addUserModal')">&times;</button>
+            </div>
+            <form onsubmit="handleAddUser(event)">
+                <div class="form-group">
+                    <label>Username (নাম)</label>
+                    <input type="text" id="newUserName" class="form-control" placeholder="ইউজারনেম দিন" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number (ফোন নম্বর)</label>
+                    <input type="tel" id="newUserPhone" class="form-control" placeholder="017XXXXXXXX" required>
+                </div>
+                <div class="form-group">
+                    <label>Initial Balance (BDT)</label>
+                    <input type="number" id="newUserBalance" class="form-control" value="100" min="0" step="0.01" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;">
+                    Save User
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 'users';
+        let userState = { isLoggedIn: false, username: '', phone: '', balance: 0, history: [] };
+        let adminDB = { users: [], deposits: [], withdraws: [] };
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function unlockAdmin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('lockPinInput').value.trim();
+            if (pin === '1234') {
+                sessionStorage.setItem('ck555_admin_unlocked', '1');
+                document.getElementById('lockPinInput').value = '';
+                document.getElementById('adminLockScreen').style.display = 'none';
+                refreshAllData();
+            } else {
+                alert('ভুল পিন! ডিফল্ট পিন হলো: 1234');
+            }
+        }
+
+        function lockAdmin() {
+            sessionStorage.removeItem('ck555_admin_unlocked');
+            document.getElementById('adminLockScreen').style.display = 'flex';
+        }
+
+        function loadStorageData() {
+            userState = JSON.parse(localStorage.getItem('ck555_user')) || {
+                isLoggedIn: false,
+                username: '',
+                phone: '',
+                balance: 0,
+                history: []
+            };
+
+            adminDB = JSON.parse(localStorage.getItem('ck555_admin_db')) || {
+                users: [],
+                deposits: [],
+                withdraws: []
+            };
+
+            if (!Array.isArray(adminDB.users)) adminDB.users = [];
+            if (!Array.isArray(adminDB.deposits)) adminDB.deposits = [];
+            if (!Array.isArray(adminDB.withdraws)) adminDB.withdraws = [];
+
+            // Sync active user from main site if registered/logged in there
+            if (userState.isLoggedIn && userState.username) {
+                const idx = adminDB.users.findIndex(
+                    u => u.username.toLowerCase() === userState.username.toLowerCase() ||
+                         (userState.phone && u.phone === userState.phone)
+                );
+                if (idx !== -1) {
+                    adminDB.users[idx].username = userState.username;
+                    adminDB.users[idx].phone = userState.phone || adminDB.users[idx].phone;
+                    adminDB.users[idx].balance = Number(userState.balance) || 0;
+                } else {
+                    adminDB.users.unshift({
+                        id: 'USR-' + Date.now(),
+                        username: userState.username,
+                        phone: userState.phone || 'N/A',
+                        password: '',
+                        balance: Number(userState.balance) || 0,
+                        createdAt: new Date().toLocaleString()
+                    });
+                }
+            }
+
+            // Import pending/recent deposits & withdraws from userState.history if not yet in adminDB
+            if (Array.isArray(userState.history)) {
+                userState.history.forEach(h => {
+                    if (typeof h.type === 'string' && h.type.startsWith('Deposit (')) {
+                        const trxMatch = h.type.match(/^Deposit \((.+)\)$/);
+                        const trxCode = trxMatch ? trxMatch[1] : 'N/A';
+                        const exists = adminDB.deposits.some(d => d.trx === trxCode && d.date === h.date);
+                        if (!exists) {
+                            adminDB.deposits.push({
+                                id: 'DEP-' + Math.random().toString(36).slice(2, 8),
+                                username: userState.username || 'User',
+                                phone: userState.phone || 'N/A',
+                                method: 'bKash/Nagad/USDT',
+                                amount: Math.abs(Number(h.amount) || 0),
+                                sender: 'N/A',
+                                trx: trxCode,
+                                status: h.status || 'Pending',
+                                date: h.date || new Date().toLocaleString()
+                            });
+                        }
+                    } else if (typeof h.type === 'string' && h.type.startsWith('Withdraw')) {
+                        const exists = adminDB.withdraws.some(w => w.date === h.date && Number(w.amount) === Math.abs(Number(h.amount) || 0));
+                        if (!exists) {
+                            adminDB.withdraws.push({
+                                id: 'WDR-' + Math.random().toString(36).slice(2, 8),
+                                username: userState.username || 'User',
+                                phone: userState.phone || 'N/A',
+                                method: h.type.replace('Withdraw', '').replace(/[()]/g, '').trim() || 'bKash',
+                                account: userState.phone || 'N/A',
+                                amount: Math.abs(Number(h.amount) || 0),
+                                status: h.status || 'Pending',
+                                date: h.date || new Date().toLocaleString()
+                            });
+                        }
+                    }
+                });
+            }
+
+            localStorage.setItem('ck555_admin_db', JSON.stringify(adminDB));
+        }
+
+        function saveAdminOnly() {
+            localStorage.setItem('ck555_admin_db', JSON.stringify(adminDB));
+            renderAll();
+        }
+
+        function syncUserStateIfMatched(username, phone, newBalance, historyMatchText, newStatus) {
+            const matchesCurrent =
+                (userState.username && username && userState.username.toLowerCase() === username.toLowerCase()) ||
+                (userState.phone && phone && phone !== 'N/A' && userState.phone === phone);
+
+            if (!matchesCurrent) return;
+
+            if (typeof newBalance === 'number') {
+                userState.balance = newBalance;
+            }
+            if (historyMatchText && newStatus && Array.isArray(userState.history)) {
+                for (let i = 0; i < userState.history.length; i++) {
+                    if (userState.history[i].type.includes(historyMatchText) || userState.history[i].date === historyMatchText) {
+                        userState.history[i].status = newStatus;
+                        break;
+                    }
+                }
+            }
+            localStorage.setItem('ck555_user', JSON.stringify(userState));
+        }
+
+        function refreshAllData() {
+            loadStorageData();
+            renderAll();
+        }
+
+        function switchSection(sec) {
+            currentSection = sec;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sectionUsers').style.display = 'none';
+            document.getElementById('sectionDeposits').style.display = 'none';
+            document.getElementById('sectionWithdraws').style.display = 'none';
+
+            if (sec === 'users') {
+                document.getElementById('tabBtnUsers').classList.add('active');
+                document.getElementById('sectionUsers').style.display = 'block';
+            } else if (sec === 'deposits') {
+                document.getElementById('tabBtnDeposits').classList.add('active');
+                document.getElementById('sectionDeposits').style.display = 'block';
+            } else if (sec === 'withdraws') {
+                document.getElementById('tabBtnWithdraws').classList.add('active');
+                document.getElementById('sectionWithdraws').style.display = 'block';
+            }
+            renderAll();
+        }
+
+        function handleAddUser(e) {
+            e.preventDefault();
+            const username = document.getElementById('newUserName').value.trim();
+            const phone = document.getElementById('newUserPhone').value.trim();
+            const balance = parseFloat(document.getElementById('newUserBalance').value) || 0;
+
+            adminDB.users.unshift({
+                id: 'USR-' + Date.now(),
+                username,
+                phone,
+                password: '',
+                balance,
+                createdAt: new Date().toLocaleString()
+            });
+
+            document.getElementById('newUserName').value = '';
+            document.getElementById('newUserPhone').value = '';
+            document.getElementById('newUserBalance').value = '100';
+            closeModal('addUserModal');
+            saveAdminOnly();
+        }
+
+        function editBalance(userId) {
+            const u = adminDB.users.find(item => item.id === userId);
+            if (!u) return;
+            const current = Number(u.balance) || 0;
+            const val = prompt(`${u.username} (${u.phone}) এর নতুন ব্যালেন্স লিখুন:`, current.toFixed(2));
+            if (val === null) return;
+            const parsed = parseFloat(val);
+            if (isNaN(parsed) || parsed < 0) {
+                alert('সঠিক ব্যালেন্স দিন!');
+                return;
+            }
+            u.balance = parsed;
+            syncUserStateIfMatched(u.username, u.phone, parsed, null, null);
+            saveAdminOnly();
+        }
+
+        function openUserProfile(userId) {
+            const u = adminDB.users.find(item => item.id === userId);
+            if (!u) return;
+
+            const userDeps = adminDB.deposits.filter(d => d.username === u.username || (u.phone && d.phone === u.phone));
+            const userWdrs = adminDB.withdraws.filter(w => w.username === u.username || (u.phone && w.phone === u.phone));
+
+            document.getElementById('profileModalBody').innerHTML = `
+                <p><b>User ID:</b> ${u.id}</p>
+                <p><b>Name / Username:</b> ${u.username}</p>
+                <p><b>Phone Number:</b> ${u.phone || 'N/A'}</p>
+                <p><b>Account Balance:</b> <span style="color:var(--primary);font-weight:700;">৳ ${(Number(u.balance) || 0).toFixed(2)}</span></p>
+                <p><b>Joined:</b> ${u.createdAt || 'N/A'}</p>
+                <hr style="border:none;border-top:1px solid var(--border);margin:10px 0;">
+                <p><b>Total Deposits:</b> ${userDeps.length} | <b>Total Withdraws:</b> ${userWdrs.length}</p>
+            `;
+            openModal('profileModal');
+        }
+
+        function deleteUser(userId) {
+            if (!confirm('আপনি কি এই ইউজারটিকে মুছে ফেলতে চান?')) return;
+            adminDB.users = adminDB.users.filter(u => u.id !== userId);
+            saveAdminOnly();
+        }
+
+        function updateDepositStatus(depId, status) {
+            const dep = adminDB.deposits.find(d => d.id === depId);
+            if (!dep) return;
+
+            const prevStatus = dep.status;
+            const amt = Number(dep.amount) || 0;
+            const u = adminDB.users.find(
+                item => item.username === dep.username || (dep.phone && dep.phone !== 'N/A' && item.phone === dep.phone)
+            );
+
+            // If previously approved and now rejected/cancelled, revert balance
+            if (prevStatus === 'Approved' && (status === 'Rejected' || status === 'Cancelled')) {
+                if (u) u.balance = Math.max(0, (Number(u.balance) || 0) - amt);
+                if ((userState.username && userState.username === dep.username) || (userState.phone && userState.phone === dep.phone)) {
+                    userState.balance = Math.max(0, (Number(userState.balance) || 0) - amt);
+                }
+            }
+
+            // If not previously approved and now approved, add balance
+            if (prevStatus !== 'Approved' && status === 'Approved') {
+                if (u) u.balance = (Number(u.balance) || 0) + amt;
+                if ((userState.username && userState.username === dep.username) || (userState.phone && userState.phone === dep.phone)) {
+                    userState.balance = (Number(userState.balance) || 0) + amt;
+                }
+            }
+
+            dep.status = status;
+            syncUserStateIfMatched(
+                dep.username,
+                dep.phone,
+                ((userState.username && userState.username === dep.username) || (userState.phone && userState.phone === dep.phone)) ? userState.balance : undefined,
+                dep.trx,
+                status
+            );
+            saveAdminOnly();
+        }
+
+        function updateWithdrawStatus(wdrId, status) {
+            const wdr = adminDB.withdraws.find(w => w.id === wdrId);
+            if (!wdr) return;
+
+            const prevStatus = wdr.status;
+            const amt = Number(wdr.amount) || 0;
+            const u = adminDB.users.find(
+                item => item.username === wdr.username || (wdr.phone && wdr.phone !== 'N/A' && item.phone === wdr.phone)
+            );
+
+            // Refund balance if rejected or cancelled (and wasn't already refunded)
+            if ((status === 'Rejected' || status === 'Cancelled') && prevStatus !== 'Rejected' && prevStatus !== 'Cancelled') {
+                if (u) u.balance = (Number(u.balance) || 0) + amt;
+                if ((userState.username && userState.username === wdr.username) || (userState.phone && userState.phone === wdr.phone)) {
+                    userState.balance = (Number(userState.balance) || 0) + amt;
+                }
+            }
+
+            // Re-deduct if moving from rejected/cancelled back to approved
+            if (status === 'Approved' && (prevStatus === 'Rejected' || prevStatus === 'Cancelled')) {
+                if (u) u.balance = Math.max(0, (Number(u.balance) || 0) - amt);
+                if ((userState.username && userState.username === wdr.username) || (userState.phone && userState.phone === wdr.phone)) {
+                    userState.balance = Math.max(0, (Number(userState.balance) || 0) - amt);
+                }
+            }
+
+            wdr.status = status;
+            syncUserStateIfMatched(
+                wdr.username,
+                wdr.phone,
+                ((userState.username && userState.username === wdr.username) || (userState.phone && userState.phone === wdr.phone)) ? userState.balance : undefined,
+                wdr.date,
+                status
+            );
+            saveAdminOnly();
+        }
+
+        function renderStats() {
+            const totalBal = adminDB.users.reduce((sum, u) => sum + (Number(u.balance) || 0), 0);
+            const pendingDep = adminDB.deposits.filter(d => d.status === 'Pending').length;
+            const pendingWdr = adminDB.withdraws.filter(w => w.status === 'Pending').length;
+
+            document.getElementById('statTotalUsers').innerText = adminDB.users.length;
+            document.getElementById('statTotalBalance').innerText = '৳ ' + totalBal.toFixed(2);
+            document.getElementById('statPendingDep').innerText = pendingDep;
+            document.getElementById('statPendingWdr').innerText = pendingWdr;
+        }
+
+        function renderUsers() {
+            const q = (document.getElementById('userSearchInput').value || '').trim().toLowerCase();
+            const list = document.getElementById('usersList');
+
+            const filtered = adminDB.users.filter(u =>
+                (u.username || '').toLowerCase().includes(q) ||
+                (u.phone || '').toLowerCase().includes(q)
+            );
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<div class="empty-note">কোনো ইউজার পাওয়া যায়নি।</div>`;
+                return;
+            }
+
+            list.innerHTML = filtered.map(u => `
+                <div class="data-card">
+                    <div class="data-card-head">
+                        <div>
+                            <div class="user-name"><i class="fas fa-user-circle" style="color:var(--primary);"></i> ${u.username}</div>
+                            <div class="meta-line">
+                                <i class="fas fa-phone-alt"></i> Phone: <b>${u.phone || 'N/A'}</b><br>
+                                <i class="far fa-clock"></i> Joined: ${u.createdAt || 'N/A'}
+                            </div>
+                        </div>
+                        <div class="balance-text">
+                            ৳ ${(Number(u.balance) || 0).toFixed(2)}
+                            <div style="font-size:10px;color:var(--text-muted);font-weight:500;">Balance</div>
+                        </div>
+                    </div>
+                    <div class="action-row">
+                        <button class="btn btn-info" onclick="openUserProfile('${u.id}')"><i class="fas fa-id-badge"></i> Profile</button>
+                        <button class="btn btn-warning" onclick="editBalance('${u.id}')"><i class="fas fa-wallet"></i> Edit Balance</button>
+                        <button class="btn btn-danger" onclick="deleteUser('${u.id}')"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderDeposits() {
+            const list = document.getElementById('depositsList');
+            if (adminDB.deposits.length === 0) {
+                list.innerHTML = `<div class="empty-note">কোনো ডিপোজিট রিকোয়েস্ট নেই।</div>`;
+                return;
+            }
+
+            list.innerHTML = adminDB.deposits.map(d => {
+                const cls = (d.status || 'pending').toLowerCase();
+                return `
+                    <div class="data-card">
+                        <div class="data-card-head">
+                            <div>
+                                <div class="user-name">${d.username} <span style="font-size:12px;color:var(--text-muted);font-weight:500;">(${d.phone || 'N/A'})</span></div>
+                                <div class="meta-line">
+                                    Amount: <b style="color:var(--primary);">৳ ${Number(d.amount).toFixed(2)}</b> | Method: <b>${d.method || 'N/A'}</b><br>
+                                    Sender: <b>${d.sender || 'N/A'}</b> | TrxID: <b>${d.trx || 'N/A'}</b><br>
+                                    Date: ${d.date || 'N/A'}
+                                </div>
+                            </div>
+                            <span class="badge ${cls}">${d.status}</span>
+                        </div>
+                        <div class="action-row">
+                            <button class="btn btn-primary" onclick="updateDepositStatus('${d.id}', 'Approved')"><i class="fas fa-check"></i> Approve</button>
+                            <button class="btn btn-danger" onclick="updateDepositStatus('${d.id}', 'Rejected')"><i class="fas fa-times"></i> Reject</button>
+                            <button class="btn btn-warning" onclick="updateDepositStatus('${d.id}', 'Cancelled')"><i class="fas fa-ban"></i> Cancel</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderWithdraws() {
+            const list = document.getElementById('withdrawsList');
+            if (adminDB.withdraws.length === 0) {
+                list.innerHTML = `<div class="empty-note">কোনো উইথড্র রিকোয়েস্ট নেই।</div>`;
+                return;
+            }
+
+            list.innerHTML = adminDB.withdraws.map(w => {
+                const cls = (w.status || 'pending').toLowerCase();
+                return `
+                    <div class="data-card">
+                        <div class="data-card-head">
+                            <div>
+                                <div class="user-name">${w.username} <span style="font-size:12px;color:var(--text-muted);font-weight:500;">(${w.phone || 'N/A'})</span></div>
+                                <div class="meta-line">
+                                    Amount: <b style="color:var(--accent);">৳ ${Number(w.amount).toFixed(2)}</b> | Method: <b>${w.method || 'N/A'}</b><br>
+                                    Account: <b>${w.account || 'N/A'}</b><br>
+                                    Date: ${w.date || 'N/A'}
+                                </div>
+                            </div>
+                            <span class="badge ${cls}">${w.status}</span>
+                        </div>
+                        <div class="action-row">
+                            <button class="btn btn-primary" onclick="updateWithdrawStatus('${w.id}', 'Approved')"><i class="fas fa-check"></i> Approve</button>
+                            <button class="btn btn-danger" onclick="updateWithdrawStatus('${w.id}', 'Rejected')"><i class="fas fa-times"></i> Reject</button>
+                            <button class="btn btn-warning" onclick="updateWithdrawStatus('${w.id}', 'Cancelled')"><i class="fas fa-ban"></i> Cancel</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAll() {
+            renderStats();
+            renderUsers();
+            renderDeposits();
+            renderWithdraws();
+        }
+
+        if (sessionStorage.getItem('ck555_admin_unlocked') === '1') {
+            document.getElementById('adminLockScreen').style.display = 'none';
+            refreshAllData();
+        } else {
+            loadStorageData();
+            renderStats();
+        }
+    </script>
+</body>
+</html>
